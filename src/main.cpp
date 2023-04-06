@@ -1,7 +1,11 @@
-#include <iostream>
+#include <QApplication>
+#include "ui_module/mainwindow.h"
 
-int main()
-{	
-	std::cout<<"TEST";
-	return 0;
+
+int main(int argc, char* argv[])
+{
+	QApplication a(argc, argv);
+	MainWindow w;
+	w.show();
+	return a.exec();
 }
