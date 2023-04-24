@@ -45,7 +45,7 @@ private:
 	float C_u, C_p, C_f, C_F, C_vis; 
 
 public:
-	SimDomain(std::array <float, 3> gridDim, float viscosity, float density, float referencePressure = 1.0);
+	SimDomain(std::array <float, 3> gridDim, float viscosity, float density, float uRef, float referencePressure = 1.0);
 	unsigned int getMaxNodeCount() const;
 	float getGridDim(const unsigned int axis = 0) const;
 	unsigned int getGridDim_L(const unsigned int axis = 0) const;

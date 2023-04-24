@@ -1,25 +1,30 @@
 cmake_minimum_required(VERSION 3.21)
-project(StreamSimulator LANGUAGES CXX CUDA)
 
-# set(CMAKE_CXX_STANDARD 17)
-# set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CUDA_COMPILER "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.0/bin/nvcc.exe")
+project(StreamSimulator LANGUAGES CUDA CXX)
+
+enable
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CONFIGURATION_TYPES "Release;RelWithDebInfo;Debug" CACHE STRING "" FORCE)
 
-# Inclusion CUDA
 
-find_package(CUDAToolkit REQUIRED)
 
 #==================================== Inclusion of Qt ============================#
-set(CMAKE_PREFIX_PATH $ENV{QTDIR})
+set(CMAKE_PREFIX_PATH "$ENV{QTDIR}")
+set(VTK_DIR $ENV{VTK_DIR})
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets OpenGL Gui)
 
+# Inclusion CUDA
+
+#find_package(CUDAToolkit REQUIRED)
 #==================================== Inclusion of VTK ===========================#
-set(VTK_DIR $ENV{VTK_DIR})
 
 find_package(VTK REQUIRED)
 
@@ -41,21 +46,26 @@ file(GLOB LBM_SOURCE_FILES	"${SRC_DIR}/lbm_module/*.cpp")
 
 
 add_library(stream_ui  STATIC ${UI_HEADER_FILES} ${UI_SOURCE_FILES} ${UI_GUI_FILES})
-add_library(stream_lbm STATIC ${LBM_HEADER_FILES}  ${LBM_SOURCE_FILES} ${LBM_KERNEL_FILES})
+add_library(stream_lbm STATIC ${LBM_HEADER_FILES}  ${LBM_SOURCE_FILES} )
+add_library(stream_lbm_gpu ${LBM_KERNEL_FILES})
 
+#enable_language(CUDA)
+target_link_libraries(stream_lbm ${stream_lbm_gpu})
+set_property(TARGET stream_lbm PROPERTY CUDA_SEPARABLE_COMPILATION ON)
 
 
 target_include_directories(stream_ui 	PUBLIC "${INC_DIR}/ui_module")
-
-target_include_directories(stream_lbm 	PUBLIC "${INC_DIR}/lbm_module" )
+target_include_directories(stream_lbm 	PUBLIC "${INC_DIR}/lbm_module" 
+										PUBLIC ${CUDAToolkit_INCLUDE_DIRS})
 
 target_link_libraries(stream_ui Qt6::Core Qt6::Widgets Qt6::OpenGL Qt6::Gui ${VTK_LIBRARIES})	
-target_link_libraries(stream_lbm CUDA::cudart)																	
+target_link_libraries(stream_lbm PUBLIC CUDA::cudart 
+								 PUBLIC CUDA::cuda_driver)
+											
+
 
 add_executable(StreamSimulator src/main.cpp)
+target_include_directories(StreamSimulator PRIVATE "${INC_DIR}")
 
-target_include_directories(StreamSimulator PRIVATE include)
-
-target_link_libraries(StreamSimulator PUBLIC stream_ui
-									  PUBLIC stream_lbm)
+target_link_libraries(StreamSimulator PUBLIC stream_lbm PUBLIC stream_ui)
 

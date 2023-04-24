@@ -1,8 +1,9 @@
 #ifndef SOLVER
 #define SOLVER
 #include "SimDomain.h"
+#include "SimState.h"
+
 #include <cuda_runtime_api.h>
-#include <cuda.h>
 #include "cudaErrorHandle.h"
 
 class LBMSolver

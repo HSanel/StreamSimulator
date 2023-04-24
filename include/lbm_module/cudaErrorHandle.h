@@ -1,6 +1,7 @@
 #ifndef __ERROR_H__
 #define __ERROR_H__
 #include <stdio.h>
+#include <cuda_runtime_api.h>
 
 static void HandleError( cudaError_t err,
                          const char *file,
@@ -53,7 +54,7 @@ static void printGPUInfo(int dev)
     printf(" --- MP Information for device %d ---\n", dev);
     printf("Multiprocessor count: %d\n",
         prop.multiProcessorCount);
-    printf("Shared mem per mp: %ld\n", prop.sharedMemPerBlock);
+    printf("Shared mem per mp: %zd\n", prop.sharedMemPerBlock);
     printf("Registers per mp: %d\n", prop.regsPerBlock);
     printf("Threads in warp: %d\n", prop.warpSize);
     printf("Max threads per block: %d\n",

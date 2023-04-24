@@ -1,6 +1,6 @@
 #include "SimDomain.h"
 
-SimDomain::SimDomain(std::array <float, 3> GridDim, float Viscosity, float Density, float ReferencePressure = 1.0)
+SimDomain::SimDomain(std::array <float, 3> GridDim, float Viscosity, float Density, float uRef, float ReferencePressure)
 	:gridDim(GridDim), viscosity(Viscosity), rho(Density), uRef(uRef), p0(ReferencePressure)
 {
 	w_[0] = 8.0 / 27.0;
@@ -150,7 +150,7 @@ unsigned int SimDomain::getMaxNodeCount() const
 	return nodeCount;
 }
 
-float SimDomain::getGridDim(const unsigned int axis = 0) const
+float SimDomain::getGridDim(const unsigned int axis) const
 {
 	if (axis < 3)
 		return gridDim[axis];
@@ -158,7 +158,7 @@ float SimDomain::getGridDim(const unsigned int axis = 0) const
 		return 0.f;
 }
 
-unsigned int SimDomain::getGridDim_L(const unsigned int axis = 0) const
+unsigned int SimDomain::getGridDim_L(const unsigned int axis) const
 {
 	if (axis < 3)
 		return gridDim_L[axis];
