@@ -45,6 +45,8 @@ CTestTestfile.cmake
 _deps
 
 out/build/
+build/
+LBM/
 
 [Bb][Uu][Ii][Ll]{Dd]/
 
