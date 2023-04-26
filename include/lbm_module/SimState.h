@@ -4,7 +4,7 @@
 #include "SimDomain.h"
 
 #include <cuda_runtime_api.h>
-#include "cudaErrorHandle.h"
+#include "CudaErrorHandle.h"
 #include <array>
 #include <vector>
 

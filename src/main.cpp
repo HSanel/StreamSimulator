@@ -1,9 +1,8 @@
-#include <QApplication>
-#include <ui_module/Mainwindow.h>
+//#include <QApplication>
+//#include <ui_module/MainWindow.h>
 #include <lbm_module/LBMSolver.h>
 #include <lbm_module/SimDomain.h>
-
-
+#include <iostream>
 
 
 int main(int argc, char* argv[])

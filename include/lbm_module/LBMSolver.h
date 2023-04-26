@@ -2,9 +2,10 @@
 #define SOLVER
 #include "SimDomain.h"
 #include "SimState.h"
+#include "LBMKernels.h"
 
 #include <cuda_runtime_api.h>
-#include "cudaErrorHandle.h"
+#include "CudaErrorHandle.h"
 
 class LBMSolver
 {

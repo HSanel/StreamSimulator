@@ -1,6 +1,4 @@
 #include "LBMSolver.h"
-#include "lbm_kernels.cu"
-#include <cuda_runtime.h>
 
 LBMSolver::LBMSolver(SimDomain simDom):sd(simDom){}
 
@@ -35,7 +33,7 @@ void LBMSolver::updateMoments()
 
 	st_dev.memCpyMomentsFrom(st_host);
 	
-	//test_kernel<<<2,8>>>(st_host.rho, st_host.u);
+	test_call();
 
 	st_host.memCpyMomentsFrom(st_dev);
 }
