@@ -28,16 +28,18 @@
 #include <vtkGenericOpenGLRenderWindow.h>
 #include <QVTKInteractor.h>
 #include <QVTKRenderWidget.h>
+#include <DataStructureAlg.h>
 
 struct SimRenderDimension
 {
-	int xDim = 5;
-	int yDim = 5;
-	int zDim = 5;
-	int maxNodeCount = 125;
+	int xDim;
+	int yDim;
+	int zDim;
+	int maxNodeCount;
 	float GridSize = 1;
 
 	SimRenderDimension(int xDim, int yDim, int zDim, float GridSize);
+	SimRenderDimension(std::array<unsigned int,3> dim, float GridSize);
 };
 
 //TODO:: Transformation und Rotation fixieren und über Eingabe steuern
@@ -73,7 +75,8 @@ public:
 	void showDensity();
 	void showVelocity(int axis=-1);
 
-	void updateData(std::vector<float> density, std::vector<std::array<float,3>> velocity);
+	void updateData(const std::vector<float> *density, const std::vector<std::array<float,3>> *velocity);
+	void updateData(const float* density, const float* velocity);
 	void render();
 };
 

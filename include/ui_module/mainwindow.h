@@ -8,7 +8,6 @@
 #include "SimRenderer.h"
 #include <iostream>
 
-
 namespace Ui {
 class MainWindow;
 }
@@ -18,14 +17,17 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(const SimRenderDimension &simDim, QWidget *parent = nullptr);
     ~MainWindow();
 
+    void updateData(const float* rho, const float* u);
 private:
-    Ui::MainWindow *ui;
-    std::unique_ptr<SimRenderer> simRenderer;
+    SimRenderDimension _simRenderDim;
+    std::unique_ptr<SimRenderer> _simRenderer;
 
+    Ui::MainWindow *ui;
     virtual void showEvent(QShowEvent* event) override;
+
 
 };
 

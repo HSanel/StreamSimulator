@@ -48,21 +48,28 @@ set(LBM_SOURCE	"${SRC_DIR}/lbm_module/LBMSolver.cpp"
 
 set(LBM_KERNEL	"${SRC_DIR}/lbm_module/LBMKernels.cu")
 
+set( BASE_HEADER "${INC_DIR}/DataStructureAlg.h")
+set( BASE_SRC "${SRC_DIR}/DataStructureAlg.cpp")
 
-
+add_library(stream_base  STATIC ${BASE_HEADER} ${BASE_SRC})
 add_library(stream_ui  STATIC ${UI_HEADER} ${UI_SOURCE} ${UI_GUI_FILES})
 add_library(stream_lbm STATIC ${LBM_HEADER}  ${LBM_SOURCE} ${LBM_KERNEL})
 
 
-target_include_directories(stream_ui 	PUBLIC "${INC_DIR}/ui_module")
-target_include_directories(stream_lbm 	PUBLIC "${INC_DIR}/lbm_module")
+target_include_directories(stream_base 	PUBLIC "${INC_DIR}")
+target_include_directories(stream_ui 	PUBLIC "${INC_DIR}/ui_module"
+										PUBLIC "${INC_DIR}")
+target_include_directories(stream_lbm 	PUBLIC "${INC_DIR}/lbm_module"
+										PUBLIC "${INC_DIR}")
 
-target_link_libraries(stream_ui Qt6::Core Qt6::Widgets Qt6::OpenGL Qt6::Gui ${VTK_LIBRARIES})	
+target_link_libraries(stream_ui Qt6::Core Qt6::Widgets Qt6::OpenGL Qt6::Gui ${VTK_LIBRARIES} stream_base)	
 
+target_link_libraries(stream_lbm PRIVATE stream_base)
 
 add_executable(StreamSimulator ${SRC_DIR}/main.cpp)
 target_include_directories(StreamSimulator PRIVATE "${INC_DIR}")
 
 target_link_libraries(StreamSimulator PRIVATE stream_lbm
-									  PRIVATE stream_ui)
+									  PRIVATE stream_ui
+									  PRIVATE stream_base)
 

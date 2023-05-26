@@ -2,7 +2,6 @@
 #define SOLVER
 #include "SimDomain.h"
 #include "SimState.h"
-#include "LBMKernels.h"
 
 #include <cuda_runtime_api.h>
 #include "CudaErrorHandle.h"
@@ -10,12 +9,14 @@
 class LBMSolver
 {
 private:
-	float Cd, Cl, A;
-	int simulationStep = 0;
-	bool BGKused = false;
-	bool adaptiveTimeStep = true;
-	float maxSimulationTime;
-	SimDomain sd;
+	float _Cd, _Cl, _A;
+	int _simulationStep = 0;
+	bool _BGKused = false;
+	bool _adaptiveTimeStep = true;
+	float _maxSimulationTime;
+	SimDomain _sd;
+	SimStateDev _st_dev;
+	SimStateHost _st_host;
 
 	void collision_CM(float r_vis);
 	void collision_BGK(float r_vis);
@@ -29,5 +30,7 @@ public:
 
 	void enableBGK(bool BGK_on = true);
 	void solve();
+
+	const SimStateHost* getSimState();
 };
 #endif // !SOLVER

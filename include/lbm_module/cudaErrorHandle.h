@@ -22,7 +22,7 @@ static void HandleError( cudaError_t err,
 
 static void printGPUInfo(int dev)
 {
-    cudaDeviceProp prop;
+    static cudaDeviceProp prop;
     HANDLE_ERROR(cudaGetDeviceProperties(&prop, dev));
 
     printf(" --- General Information for device %d ---\n", dev);

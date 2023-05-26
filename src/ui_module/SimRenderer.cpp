@@ -1,6 +1,7 @@
 #include "SimRenderer.h"
 
-SimRenderDimension::SimRenderDimension(int xDim, int yDim, int zDim, float GridSize) : xDim(xDim), yDim(yDim), zDim(zDim), maxNodeCount(xDim* yDim* zDim), GridSize(GridSize) {}
+SimRenderDimension::SimRenderDimension(int xDim, int yDim, int zDim, float GridSize) : xDim(xDim), yDim(yDim), zDim(zDim), maxNodeCount(xDim * yDim* zDim), GridSize(GridSize) {}
+SimRenderDimension::SimRenderDimension(std::array<unsigned int, 3> dim, float GridSize) : xDim(dim[0]), yDim(dim[1]), zDim(dim[2]), maxNodeCount(dim[0] * dim[1] * dim[2]), GridSize(GridSize) {}
 
 SimRenderer::SimRenderer(const QVTKRenderWidget* vtkWidget, const SimRenderDimension simDim): _vtkWidget(vtkWidget), _simDim(simDim)
 {
@@ -108,15 +109,31 @@ void SimRenderer::render()
 	_vtkWidget->renderWindow()->Render();
 }
 
-void SimRenderer::updateData(std::vector<float> density, std::vector<std::array<float, 3>> velocity)
+void SimRenderer::updateData(const std::vector<float> *density, const std::vector<std::array<float, 3>> *velocity)
 {
 	assert(density.size() == _simDim.maxNodeCount || "ERROR:: Data dimension doesn't correspond to the Domain Dimension");
 	assert(velocity.size() == _simDim.maxNodeCount || "ERROR:: Velocity dimension doesn't correspond to the Domain Dimension");
 
 	for (int pos = 0; pos < _simDim.maxNodeCount ; ++pos)
 	{
+		_densityData->SetValue(pos, (*density)[pos]);
+		_velocityData->SetTuple(pos, (*velocity)[pos].data());
+	}
+	_structuredGrid->GetPointData()->SetScalars(_densityData);
+	_structuredGrid->GetPointData()->SetVectors(_velocityData);
+	_dataMapper->Update();
+}
+
+void SimRenderer::updateData(const float* density, const float* velocity)
+{
+	assert(density.size() == _simDim.maxNodeCount || "ERROR:: Data dimension doesn't correspond to the Domain Dimension");
+	assert(velocity.size() == _simDim.maxNodeCount || "ERROR:: Velocity dimension doesn't correspond to the Domain Dimension");
+
+	for (int pos = 0; pos < _simDim.maxNodeCount; ++pos)
+	{
+		std::array<float, 3> temp_array{ velocity[arrayLayout(pos,0)], velocity[arrayLayout(pos,1)] ,velocity[arrayLayout(pos,2)] };
 		_densityData->SetValue(pos, density[pos]);
-		_velocityData->SetTuple(pos, velocity[pos].data());
+		_velocityData->SetTuple(pos, temp_array.data());
 	}
 	_structuredGrid->GetPointData()->SetScalars(_densityData);
 	_structuredGrid->GetPointData()->SetVectors(_velocityData);

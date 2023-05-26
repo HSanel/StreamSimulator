@@ -1,48 +1,33 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+MainWindow::MainWindow(const SimRenderDimension &simDim, QWidget* parent) :
+    QMainWindow(parent), _simRenderDim(simDim), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     try 
     {
-        auto simDim = SimRenderDimension{ 10, 10, 10, 1.f };
         QVTKRenderWidget* _qvtkWidget = new QVTKRenderWidget(this);
-        simRenderer = std::make_unique<SimRenderer>(_qvtkWidget, simDim);
+        _simRenderer = std::make_unique<SimRenderer>(_qvtkWidget, _simRenderDim);
         ui->verticalLayout_vtk->addWidget(_qvtkWidget);
         ui->verticalLayout_vtk->update();
-
-        std::vector<float> density(1000);
-        std::vector<std::array<float, 3>> velocity(1000);
-
-        for (int i = 0; i < 1000; ++i)
-        {
-            if (i > 500)
-            {
-                density[i] = rand() / static_cast<float>(RAND_MAX);
-                
-            }
-            else
-            {
-                density[i] = 0.5;
-            }
-            velocity[i] = std::array<float, 3>{rand() / static_cast<float>(RAND_MAX), 0.5f, 0.5f};
-        }
-
-        simRenderer->updateData(density, velocity);
-        simRenderer->showVelocity();
-        simRenderer->showDensity();
-
-        simRenderer->setCutClipPlane({ 8.0,0.0,0.0 }, { 1.0,0.0,0.0 });
-        simRenderer->activateCutting();
-        simRenderer->deactivateClipAndCut();
     }
     catch (std::exception e)
     {
         qDebug() << "EXCEPTION::" << e.what() << "\n";
     }
+}
+
+void MainWindow::updateData(const float *rho, const float *u)
+{
+    _simRenderer->updateData(rho, u);
+    _simRenderer->showVelocity();
+    _simRenderer->showDensity();
+
+    _simRenderer->setCutClipPlane({ 8.0,0.0,0.0 }, { 1.0,0.0,0.0 });
+    _simRenderer->activateCutting();
+    _simRenderer->deactivateClipAndCut();
+    _simRenderer->render();
 }
 
 MainWindow::~MainWindow()
@@ -52,5 +37,5 @@ MainWindow::~MainWindow()
 
 void MainWindow::showEvent(QShowEvent* event)
 {
-    simRenderer->render();
+    _simRenderer->render();
 }
